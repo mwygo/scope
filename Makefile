@@ -56,14 +56,14 @@ docker/weave:
 	chmod u+x docker/weave
 
 docker/weaveutil:
-	$(SUDO) docker run --rm  --entrypoint=cat weaveworks/weaveexec:$(WEAVENET_VERSION) /usr/bin/weaveutil > $@
+	$(SUDO) docker run --network=host --rm  --entrypoint=cat weaveworks/weaveexec:$(WEAVENET_VERSION) /usr/bin/weaveutil > $@
 	chmod +x $@
 
 docker/%: %
 	cp $* docker/
 
 %.tar: docker/Dockerfile.%
-	$(SUDO) docker build --build-arg=revision=$(GIT_REVISION) -t $(DOCKERHUB_USER)/$* -f $< docker/
+	$(SUDO) docker build --network=host --build-arg=revision=$(GIT_REVISION) -t $(DOCKERHUB_USER)/$* -f $< docker/
 	$(SUDO) docker tag $(DOCKERHUB_USER)/$* $(DOCKERHUB_USER)/$*:$(IMAGE_TAG)
 	$(SUDO) docker save $(DOCKERHUB_USER)/$*:latest > $@
 
@@ -85,10 +85,10 @@ ifeq ($(BUILD_IN_CONTAINER),true)
 
 $(SCOPE_EXE) $(RUNSVINIT) lint tests shell prog/staticui/staticui.go prog/externalui/externalui.go: $(SCOPE_BACKEND_BUILD_UPTODATE)
 	@mkdir -p $(shell pwd)/.pkg
-	$(SUDO) docker run $(RM) $(RUN_FLAGS) \
-		-v $(shell pwd):/go/src/github.com/weaveworks/scope:delegated,z \
-		-v $(shell pwd)/.pkg:/go/pkg:delegated,z \
-		-v $(shell pwd)/.cache:/go/cache:delegated,z \
+	$(SUDO) docker run --network=host $(RM) $(RUN_FLAGS) \
+		-v $(shell pwd):/go/src/github.com/weaveworks/scope:z \
+		-v $(shell pwd)/.pkg:/go/pkg:z \
+		-v $(shell pwd)/.cache:/go/cache:z \
 		-u $(shell id -u ${USER}):$(shell id -g ${USER}) \
 		--net=host \
 		-e HOME=/go/src/github.com/weaveworks/scope \
@@ -137,10 +137,10 @@ ifeq ($(BUILD_IN_CONTAINER),true)
 
 SCOPE_UI_TOOLCHAIN=.cache/build_node_modules
 SCOPE_UI_TOOLCHAIN_UPTODATE=$(SCOPE_UI_TOOLCHAIN)/.uptodate
-SCOPE_UI_BUILD_CMD=$(SUDO) docker run $(RM) $(RUN_FLAGS) \
-			-v $(shell pwd)/.cache:/home/weave/scope/.cache:delegated,z \
-			-v $(shell pwd)/client:/home/weave/scope/client:delegated,z \
-			-v $(shell pwd)/$(SCOPE_UI_TOOLCHAIN):/home/weave/scope/client/node_modules:delegated,z \
+SCOPE_UI_BUILD_CMD=$(SUDO) docker run --network=host $(RM) $(RUN_FLAGS) \
+			-v $(shell pwd)/.cache:/home/weave/scope/.cache:z \
+			-v $(shell pwd)/client:/home/weave/scope/client:z \
+			-v $(shell pwd)/$(SCOPE_UI_TOOLCHAIN):/home/weave/scope/client/node_modules:z \
 			-w /home/weave/scope/client \
 			-e HOME=/home/weave/scope/client \
 			-e NPM_CONFIG_LOGLEVEL=warn \
@@ -201,12 +201,12 @@ client/build-external/index.html: $(SCOPE_UI_TOOLCHAIN_UPTODATE)
 endif
 
 $(SCOPE_BACKEND_BUILD_UPTODATE): backend/*
-	$(SUDO) docker build -t $(SCOPE_BACKEND_BUILD_IMAGE) backend
+	$(SUDO) docker build --network=host -t $(SCOPE_BACKEND_BUILD_IMAGE) backend
 	$(SUDO) docker tag $(SCOPE_BACKEND_BUILD_IMAGE) $(SCOPE_BACKEND_BUILD_IMAGE):$(IMAGE_TAG)
 	touch $@
 
 # Run aws CLI from a container image so we don't have to install Python, etc.
-AWS_COMMAND=docker run $(RM) $(RUN_FLAGS) \
+AWS_COMMAND=docker run --network=host $(RM) $(RUN_FLAGS) \
 	-e AWS_ACCESS_KEY_ID=$$UI_BUCKET_KEY_ID \
 	-e AWS_SECRET_ACCESS_KEY=$$UI_BUCKET_KEY_SECRET \
 	-v $(shell pwd):/scope \

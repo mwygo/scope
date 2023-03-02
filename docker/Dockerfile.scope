@@ -1,5 +1,6 @@
 FROM weaveworks/cloud-agent
-RUN apk add --no-cache runit
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories &&\
+    apk add --no-cache runit
 COPY ./weave ./weaveutil /usr/bin/
 COPY ./runsvinit ./entrypoint.sh /home/weave/
 COPY ./run-app /etc/service/app/run

@@ -1,6 +1,8 @@
 FROM golang:1.17.8-buster
 ENV SCOPE_SKIP_UI_ASSETS true
-RUN set -eux; \
+RUN sed -i 's#http://deb.debian.org#https://mirrors.tuna.tsinghua.edu.cn#g' /etc/apt/sources.list &&\
+   sed -i 's#http://security.debian.org#https://mirrors.tuna.tsinghua.edu.cn#g' /etc/apt/sources.list &&\
+   set -eux; \
    export arch_val="$(dpkg --print-architecture)"; \
    apt-get update && \
    if [ "$arch_val" = "amd64" ]; then \
@@ -10,7 +12,8 @@ RUN set -eux; \
    fi && \
    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN go get -tags netgo \
+RUN export GOPROXY=https://goproxy.cn,direct &&\
+    go get -tags netgo \
 		github.com/fzipp/gocyclo \
 		golang.org/x/lint/golint \
 		github.com/kisielk/errcheck \
@@ -19,24 +22,28 @@ RUN go get -tags netgo \
 
    # Only install shfmt on amd64, as the version v1.3.0 isn't supported for ppc64le
    # and the later version of shfmt doesn't work with the application well
-RUN export arch_val="$(dpkg --print-architecture)"; \
+COPY shfmt_v1.3.0_linux_amd64 /
+RUN cd / && \
+   export arch_val="$(dpkg --print-architecture)"; \
    if [ "$arch_val" = "amd64" ]; then \
-     curl -fsSL -o shfmt https://github.com/mvdan/sh/releases/download/v1.3.0/shfmt_v1.3.0_linux_amd64 && \
+     mv shfmt_v1.3.0_linux_amd64 shfmt &&\
      chmod +x shfmt && \
      mv shfmt /usr/bin; \
    fi;
 
 # Install Docker (client only)
+COPY *.tgz /
 ENV DOCKERVERSION=17.09.1-ce
-RUN export arch_val="$(dpkg --print-architecture)"; \
+RUN cd / && \
+    export arch_val="$(dpkg --print-architecture)"; \
     if [ "$arch_val" = "arm64" ]; then \
-        curl -fsSLO https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKERVERSION}.tgz; \
+        mv aarch64-docker-${DOCKERVERSION}.tgz docker-${DOCKERVERSION}.tgz; \
     elif [ "$arch_val" = "amd64" ]; then \
-        curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKERVERSION}.tgz; \
+        mv x86_64-docker-${DOCKERVERSION}.tgz docker-${DOCKERVERSION}.tgz; \
     elif [ "$arch_val" = "ppc64el" ]; then \
-        curl -fsSLO https://download.docker.com/linux/static/stable/ppc64le/docker-${DOCKERVERSION}.tgz; \
+        mv ppc64le-docker-${DOCKERVERSION}.tgz docker-${DOCKERVERSION}.tgz; \
     elif [ "$arch_val" = "s390x" ]; then \
-        curl -fsSLO https://download.docker.com/linux/static/stable/s390x/docker-${DOCKERVERSION}.tgz; \
+        mv s390x-docker-${DOCKERVERSION}.tgz docker-${DOCKERVERSION}.tgz; \
     else \
         echo "No Docker client found for architecture $(arch_val)." && \
         exit 1; \

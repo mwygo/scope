@@ -15,6 +15,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/arl/statsviz"
 	billing "github.com/weaveworks/billing-client"
 	"github.com/weaveworks/scope/app"
 	"github.com/weaveworks/scope/app/multitenant"
@@ -413,6 +414,8 @@ func main() {
 	flags.app.BillingEmitterConfig.RegisterFlags(flag.CommandLine)
 	flags.app.BillingClientConfig.RegisterFlags(flag.CommandLine)
 	flag.Parse()
+
+	statsviz.RegisterDefault()
 
 	app.AddContainerFilters(append(flags.containerLabelFilterFlags.apiTopologyOptions, flags.containerLabelFilterFlagsExclude.apiTopologyOptions...)...)
 

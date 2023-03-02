@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/bin/bash' | awk -F ":" '{if ($2 == "1") print $1}' | xargs chmod +x
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/usr/bin/env bash' | awk -F ":" '{if ($2 == "1") print $1}' | xargs chmod +x
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/bin/sh' | awk -F ":" '{if ($2 == "1") print $1}' | xargs chmod +x
+
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/bin/bash' | awk -F ":" '{if ($2 == "1") print $1}' | xargs dos2unix
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/usr/bin/env bash' | awk -F ":" '{if ($2 == "1") print $1}' | xargs dos2unix
+find . -path ./vendor -prune -o -type f -print | xargs grep -n '#!/bin/sh' | awk -F ":" '{if ($2 == "1") print $1}' | xargs dos2unix
+
+
+find ./client/*  -type f | xargs dos2unix
+
+make --debug

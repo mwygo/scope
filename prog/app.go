@@ -62,6 +62,7 @@ func router(collector app.Collector, controlRouter app.ControlRouter, pipeRouter
 
 	// We pull in the http.DefaultServeMux to get the pprof routes
 	router.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
+	router.PathPrefix("/debug/statsviz").Handler(http.DefaultServeMux)
 	router.Path("/metrics").Handler(promhttp.Handler())
 
 	app.RegisterReportPostHandler(collector, router)
