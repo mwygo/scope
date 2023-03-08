@@ -52,7 +52,7 @@ cri: update-cri protoc-gen-gofast
 	@cd $(GOPATH)/src;protoc --proto_path=$(GOPATH)/src --gofast_out=plugins=grpc:. github.com/weaveworks/scope/cri/runtime/api.proto
 
 docker/weave:
-	curl -L https://github.com/weaveworks/weave/releases/download/v$(WEAVENET_VERSION)/weave -o docker/weave
+	# curl -L https://github.com/weaveworks/weave/releases/download/v$(WEAVENET_VERSION)/weave -o docker/weave
 	chmod u+x docker/weave
 
 docker/weaveutil:
@@ -85,7 +85,7 @@ ifeq ($(BUILD_IN_CONTAINER),true)
 
 $(SCOPE_EXE) $(RUNSVINIT) lint tests shell prog/staticui/staticui.go prog/externalui/externalui.go: $(SCOPE_BACKEND_BUILD_UPTODATE)
 	@mkdir -p $(shell pwd)/.pkg
-	$(SUDO) docker run --network=host $(RM) $(RUN_FLAGS) \
+	$(SUDO) docker run $(RM) $(RUN_FLAGS) \
 		-v $(shell pwd):/go/src/github.com/weaveworks/scope:z \
 		-v $(shell pwd)/.pkg:/go/pkg:z \
 		-v $(shell pwd)/.cache:/go/cache:z \

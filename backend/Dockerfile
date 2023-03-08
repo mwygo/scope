@@ -13,11 +13,10 @@ RUN sed -i 's#http://deb.debian.org#https://mirrors.tuna.tsinghua.edu.cn#g' /etc
    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN export GOPROXY=https://goproxy.cn,direct &&\
-    go get -tags netgo \
-		github.com/fzipp/gocyclo \
-		golang.org/x/lint/golint \
-		github.com/kisielk/errcheck \
-		github.com/client9/misspell/cmd/misspell && \
+    go install -tags netgo github.com/fzipp/gocyclo/cmd/gocyclo@v0.6.0 && \
+	go install -tags netgo golang.org/x/lint/golint@v0.0.0-20210508222113-6edffad5e616 &&\
+	go install -tags netgo github.com/kisielk/errcheck@v1.6.3 &&\
+	go install -tags netgo github.com/client9/misspell/cmd/misspell@v0.3.4 && \
 	rm -rf /go/pkg/ /go/src/
 
    # Only install shfmt on amd64, as the version v1.3.0 isn't supported for ppc64le
