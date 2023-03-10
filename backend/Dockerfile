@@ -1,4 +1,4 @@
-FROM golang:1.17.8-buster
+FROM golang:1.18.10-buster
 ENV SCOPE_SKIP_UI_ASSETS true
 RUN sed -i 's#http://deb.debian.org#https://mirrors.tuna.tsinghua.edu.cn#g' /etc/apt/sources.list &&\
    sed -i 's#http://security.debian.org#https://mirrors.tuna.tsinghua.edu.cn#g' /etc/apt/sources.list &&\

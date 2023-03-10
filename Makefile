@@ -226,7 +226,7 @@ ui-pkg-upload: client/bundle/weave-scope.tgz
 clean:
 	$(GO) clean ./...
 	rm -rf $(SCOPE_EXPORT) $(SCOPE_UI_TOOLCHAIN_UPTODATE) $(SCOPE_BACKEND_BUILD_UPTODATE) \
-		$(SCOPE_EXE) $(RUNSVINIT) prog/staticui/staticui.go prog/externalui/externalui.go client/build/*.js client/build-external/*.js docker/weave .pkg \
+		$(SCOPE_EXE) $(RUNSVINIT) prog/staticui/staticui.go prog/externalui/externalui.go client/build/*.js client/build-external/*.js .pkg \
 		$(CODECGEN_TARGETS) $(CODECGEN_DIR)/bin
 
 clean-codecgen:
