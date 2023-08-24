@@ -189,16 +189,27 @@ func NewClient(config ClientConfig) (Client, error) {
 	result.serviceStore = result.setupStore("services")
 	result.nodeStore = result.setupStore("nodes")
 	result.namespaceStore = result.setupStore("namespaces")
-	result.deploymentStore = result.setupStore("deployments")
-	result.daemonSetStore = result.setupStore("daemonsets")
-	result.jobStore = result.setupStore("jobs")
-	result.statefulSetStore = result.setupStore("statefulsets")
-	result.cronJobStore = result.setupStore("cronjobs")
-	result.persistentVolumeStore = result.setupStore("persistentvolumes")
-	result.persistentVolumeClaimStore = result.setupStore("persistentvolumeclaims")
-	result.storageClassStore = result.setupStore("storageclasses")
-	result.volumeSnapshotStore = result.setupStore("volumesnapshots")
-	result.volumeSnapshotDataStore = result.setupStore("volumesnapshotdatas")
+	//result.deploymentStore = result.setupStore("deployments")
+	//result.daemonSetStore = result.setupStore("daemonsets")
+	//result.jobStore = result.setupStore("jobs")
+	//result.statefulSetStore = result.setupStore("statefulsets")
+	//result.cronJobStore = result.setupStore("cronjobs")
+	//result.persistentVolumeStore = result.setupStore("persistentvolumes")
+	//result.persistentVolumeClaimStore = result.setupStore("persistentvolumeclaims")
+	//result.storageClassStore = result.setupStore("storageclasses")
+	//result.volumeSnapshotStore = result.setupStore("volumesnapshots")
+	//result.volumeSnapshotDataStore = result.setupStore("volumesnapshotdatas")
+
+	result.deploymentStore = &cache.FakeCustomStore{}
+	result.daemonSetStore = &cache.FakeCustomStore{}
+	result.jobStore = &cache.FakeCustomStore{}
+	result.statefulSetStore = &cache.FakeCustomStore{}
+	result.cronJobStore = &cache.FakeCustomStore{}
+	result.persistentVolumeStore = &cache.FakeCustomStore{}
+	result.persistentVolumeClaimStore = &cache.FakeCustomStore{}
+	result.storageClassStore = &cache.FakeCustomStore{}
+	result.volumeSnapshotStore = &cache.FakeCustomStore{}
+	result.volumeSnapshotDataStore = &cache.FakeCustomStore{}
 
 	return result, nil
 }

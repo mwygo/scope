@@ -1,6 +1,6 @@
-FROM alpine:3.13.2
+FROM cr.loongnix.cn/library/alpine:3.11
 WORKDIR /home/weave
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories &&\
+RUN apk update &&\
     apk add --no-cache bash conntrack-tools iproute2 util-linux curl
 COPY ./scope /home/weave/
 ENTRYPOINT ["/home/weave/scope", "--mode=probe", "--no-app", "--probe.docker=true"]

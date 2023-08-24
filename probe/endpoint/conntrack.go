@@ -89,7 +89,7 @@ func (c *conntrackWalker) loop() {
 		c.clearFlows()
 
 		select {
-		case <-time.After(time.Second):
+		case <-time.After(3 * time.Second):
 		case <-c.quit:
 			return
 		}
