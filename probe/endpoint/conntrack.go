@@ -143,6 +143,7 @@ func (c *conntrackWalker) run() {
 		select {
 		case <-periodicRestart:
 			log.Debugf("conntrack periodic restart")
+			stop()
 			return
 		case <-c.quit:
 			log.Infof("conntrack quit signal - exiting")
